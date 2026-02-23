@@ -18,8 +18,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!ready) return;
-    if (user) router.replace('/');      // page home
-    else router.replace('/login');      // page login
+    if (user) router.replace('/');      
+    else router.replace('/login');      
   }, [ready, user]);
 
   return <Slot />;
