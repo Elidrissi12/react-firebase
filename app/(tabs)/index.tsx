@@ -1,13 +1,24 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Pressable } from 'react-native';
+import { signOut } from 'firebase/auth';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
+import { auth } from '../src/services/firebase';
 
 export default function HomeScreen() {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      // La redirection vers /login est gérée par app/_layout.tsx via onAuthStateChanged
+    } catch (e) {
+      console.warn('Erreur lors de la déconnexion :', e);
+    }
+  };
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -20,6 +31,9 @@ export default function HomeScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
+        <Pressable style={styles.logoutButton} onPress={handleLogout}>
+          <ThemedText style={styles.logoutText}>Se déconnecter</ThemedText>
+        </Pressable>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
@@ -94,5 +108,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  logoutButton: {
+    marginLeft: 'auto',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#ef4444',
+  },
+  logoutText: {
+    color: '#ffffff',
+    fontWeight: '600',
   },
 });
