@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Slot, useRouter } from 'expo-router';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from './src/services/firebase';
-
+import '../global.css';
 export default function RootLayout() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);

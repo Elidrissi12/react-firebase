@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  StyleSheet,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  ImageBackground,
-} from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import React, { useState } from 'react';
+import {
+  ActivityIndicator,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { auth } from './src/services/firebase';
 import { mapFirebaseAuthError } from './src/utils/authErrors';
 
@@ -48,211 +47,96 @@ export default function RegisterScreen() {
   return (
     <ImageBackground
       source={require('../assets/images/1771848954052-019c8a6d-2cc0-7e8f-bbeb-51e5bebd7019.png')}
-      style={styles.background}
+      className="flex-1"
       resizeMode="cover"
     >
       <KeyboardAvoidingView
-        style={styles.page}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerClassName="flex-grow px-5 pt-16 pb-8"
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.headerRow}>
+          <View className="flex-row items-center mb-4 min-h-[40px]">
+            <Pressable
+              className="w-10 h-10 rounded-full items-center justify-center mr-3"
+              onPress={() => router.back()}
+            >
+              <Text className="text-3xl text-slate-900">{'‹'}</Text>
+            </Pressable>
+            <Text className="text-[26px] font-bold text-slate-900">Sign up</Text>
+          </View>
+
+          <Text className="text-[13px] text-slate-500 mb-4">
+            Sign up with one of the following
+          </Text>
+
+          <View className="flex-row gap-3 mb-6">
+            <Pressable className="flex-1 flex-row items-center justify-center rounded-full border border-slate-200 bg-slate-50 py-5 gap-1.5">
+              <AntDesign name="google" size={18} color="#DB4437" />
+              <Text className="text-[13px] font-medium text-slate-900">| With Google</Text>
+            </Pressable>
+
+            <Pressable className="flex-1 flex-row items-center justify-center rounded-full border border-slate-200 bg-slate-50 py-5 gap-1.5">
+              <Ionicons name="logo-apple" size={18} color="#111" />
+              <Text className="text-[13px] font-medium text-slate-900">| With Apple</Text>
+            </Pressable>
+          </View>
+
+          <View className="mb-4">
+            <Text className="text-[13px] font-medium text-slate-700 mb-3 mt-2">Name*</Text>
+            <TextInput
+              className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
+              placeholder="Your name"
+              value={name}
+              onChangeText={setName}
+            />
+
+            <Text className="text-[13px] font-medium text-slate-700 mb-3 mt-2">Email*</Text>
+            <TextInput
+              className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
+              placeholder="Email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            <Text className="text-[13px] font-medium text-slate-700 mb-3 mt-2">Password*</Text>
+            <TextInput
+              className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
+              placeholder="Password"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            {error && <Text className="text-[12px] text-red-600 mt-2">{error}</Text>}
+          </View>
+
           <Pressable
-            style={styles.backButton}
-            onPress={() => router.back()}
+            className={`mt-10 py-3.5 rounded-full items-center bg-blue-600 ${
+              !canSubmit || loading ? 'opacity-60' : ''
+            }`}
+            onPress={onRegister}
+            disabled={!canSubmit || loading}
           >
-            <Text style={styles.backIcon}>{'‹'}</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-white font-semibold text-[15px]">Sign up</Text>
+            )}
           </Pressable>
-          <Text style={styles.headerTitle}>Sign up</Text>
+
+          <View className="mt-5 flex-row justify-center">
+            <Text className="text-[12px] text-slate-600">Already have an account?</Text>
+            <Pressable onPress={() => router.replace('/login')} disabled={loading}>
+              <Text className="text-[12px] text-blue-600 font-semibold"> Log in</Text>
+            </Pressable>
           </View>
-
-          <Text style={styles.subtitle}>Sign up with one of the following</Text>
-
-          <View style={styles.socialRow}>
-          <Pressable style={styles.socialButton}>
-            <AntDesign name="google" size={18} color="#DB4437" />
-            <Text style={styles.socialText}> | With Google</Text>
-          </Pressable>
-        
-          <Pressable style={styles.socialButton}>
-            <Ionicons name="logo-apple" size={18} color="#111" />
-            <Text style={styles.socialText}> | With Apple</Text>
-          </Pressable>
-          </View>
-
-          <View style={styles.form}>
-          <Text style={styles.label}>Name*</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Your name"
-            value={name}
-            onChangeText={setName}
-          />
-
-          <Text style={styles.label}>Email*</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <Text style={styles.label}>Password*</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          {error && <Text style={styles.error}>{error}</Text>}
-        </View>
-
-        <Pressable
-          style={[styles.button, !canSubmit && styles.buttonDisabled]}
-          onPress={onRegister}
-          disabled={!canSubmit || loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Sign up</Text>
-          )}
-        </Pressable>
-
-        <View style={styles.bottomRow}>
-          <Text style={styles.bottomText}>Already have an account?</Text>
-          <Pressable onPress={() => router.replace('/login')} disabled={loading}>
-            <Text style={styles.bottomLink}> Log in</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
-  </ImageBackground>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
-  page: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 32,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    minHeight: 40,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  backIcon: {
-    fontSize: 32,
-    color: '#111827',
-    lineHeight: 40,
-    includeFontPadding: false,
-  },
-  headerTitle: {
-    fontSize: 26,
-    fontWeight: '700',
-    lineHeight: 40,
-    includeFontPadding: false,
-  },
-  subtitle: { fontSize: 13, color: '#6b7280', marginBottom: 16 },
-  socialRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 18,
-  },
-  socialButton: {
-  flex: 1,
-  flexDirection: 'row',   
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: 6,                 
-  borderRadius: 999,
-  borderWidth: 1,
-  borderColor: '#e5e7eb',
-  paddingVertical: 20,
-  backgroundColor: '#F9FAFB',
-},
-  socialText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#111827',
-  },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 18,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#505c73',
-  },
-  
-  form: {
-    marginBottom: 26,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#374151',
-    marginBottom: 10,
-    marginTop: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 12,
-    paddingHorizontal: 4,
-    paddingVertical: 10,
-    marginBottom: 10,
-    backgroundColor: '#F9FAFF',
-  },
-  button: {
-    marginTop: 100,
-    paddingVertical: 14,
-    borderRadius:999,
-    alignItems: 'center',
-    backgroundColor: '#2563EB',
-  },
-  buttonDisabled: { opacity: 0.9 },
-  buttonText: { color: '#fff', fontWeight: '600', fontSize: 15 },
-  error: { color: '#dc2626', marginTop: 8, fontSize: 12 },
-  bottomRow: {
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  bottomText: {
-    fontSize: 12,
-    color: '#6b7280',
-  },
-  bottomLink: {
-    fontSize: 12,
-    color: '#0652f5',
-    fontWeight: '600',
-  },
-});
-

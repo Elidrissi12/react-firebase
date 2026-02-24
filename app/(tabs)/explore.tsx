@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { Collapsible } from '@/components/ui/collapsible';
 import { ExternalLink } from '@/components/external-link';
@@ -14,14 +14,15 @@ export default function TabTwoScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
       headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
+        <View className="absolute -bottom-24 -left-9">
+          <IconSymbol
+            size={310}
+            color="#808080"
+            name="chevron.left.forwardslash.chevron.right"
+          />
+        </View>
       }>
-      <ThemedView style={styles.titleContainer}>
+      <ThemedView className="flex-row gap-2 items-center">
         <ThemedText
           type="title"
           style={{
@@ -97,16 +98,3 @@ export default function TabTwoScreen() {
     </ParallaxScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});
