@@ -24,6 +24,12 @@ type TodosContextValue = {
   addTodo: (input: Omit<Todo, 'id' | 'createdAt'>) => void;
   toggleTodo: (id: string) => void;
   deleteTodo: (id: string) => void;
+  updateTodo: (
+    id: string,
+    changes: Partial<
+      Pick<Todo, 'title' | 'description' | 'category' | 'date' | 'time' | 'important'>
+    >,
+  ) => void;
 };
 
 const TodosContext = createContext<TodosContextValue | undefined>(undefined);
@@ -54,14 +60,29 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
     setTodos(prev => prev.filter(t => t.id !== id));
   }, []);
 
+  const updateTodo = useCallback(
+    (
+      id: string,
+      changes: Partial<
+        Pick<Todo, 'title' | 'description' | 'category' | 'date' | 'time' | 'important'>
+      >,
+    ) => {
+      setTodos(prev =>
+        prev.map(t => (t.id === id ? { ...t, ...changes } : t)),
+      );
+    },
+    [],
+  );
+
   const value = useMemo(
     () => ({
       todos,
       addTodo,
       toggleTodo,
       deleteTodo,
+      updateTodo,
     }),
-    [todos, addTodo, toggleTodo, deleteTodo],
+    [todos, addTodo, toggleTodo, deleteTodo, updateTodo],
   );
 
   return (

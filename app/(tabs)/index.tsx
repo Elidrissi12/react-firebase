@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { FlatList, Pressable, SafeAreaView, Text, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { FlatList, Modal, Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTodos, type Todo } from '../src/store/todosStore';
 
@@ -58,7 +58,7 @@ const checkboxColorForCategory = (category: string) => {
 export default function TasksScreen() {
   const router = useRouter();
   const { category } = useLocalSearchParams<{ category?: string }>();
-  const { todos, toggleTodo } = useTodos();
+  const { todos, toggleTodo, updateTodo, deleteTodo } = useTodos();
 
   const filteredTodos = useMemo(
     () => filterByCategory(todos, category),
@@ -67,6 +67,11 @@ export default function TasksScreen() {
 
   const total = filteredTodos.length || 0;
   const doneCount = filteredTodos.filter(t => t.done).length;
+
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editNote, setEditNote] = useState('');
+  const canSaveEdit = editTitle.trim().length > 0;
 
   const handleNewTask = () => {
     router.push('/(tabs)/new-task');
@@ -80,11 +85,42 @@ export default function TasksScreen() {
     router.back();
   };
 
+  const openEdit = (todo: Todo) => {
+    setEditingTodo(todo);
+    setEditTitle(todo.title);
+    setEditNote(todo.time || todo.description || '');
+  };
+
+  const closeEdit = () => {
+    setEditingTodo(null);
+    setEditTitle('');
+    setEditNote('');
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingTodo || !canSaveEdit) return;
+    updateTodo(editingTodo.id, {
+      title: editTitle.trim(),
+      time: editNote || undefined,
+      description: editNote || undefined,
+    });
+    closeEdit();
+  };
+
+  const handleDeleteFromModal = () => {
+    if (!editingTodo) return;
+    deleteTodo(editingTodo.id);
+    closeEdit();
+  };
+
   const renderItem = ({ item }: { item: Todo }) => {
     const color = checkboxColorForCategory(item.category);
     return (
       <View className="flex-row items-center py-3 border-b border-slate-200">
-        <View className="flex-1">
+        <Pressable
+          onPress={() => openEdit(item)}
+          className="flex-1"
+        >
           <Text
             className={`text-[14px] ${
               item.done ? 'text-slate-400 line-through' : 'text-slate-900'
@@ -97,7 +133,7 @@ export default function TasksScreen() {
               {item.time ?? item.description}
             </Text>
           )}
-        </View>
+        </Pressable>
 
         <Pressable
           onPress={() => toggleTodo(item.id)}
@@ -172,6 +208,67 @@ export default function TasksScreen() {
           />
         )}
       </View>
+
+      {/* Edit modal */}
+      <Modal
+        visible={!!editingTodo}
+        transparent
+        animationType="fade"
+        onRequestClose={closeEdit}
+      >
+        <View className="flex-1 bg-black/40 items-center justify-center px-6">
+          <View className="w-full rounded-2xl bg-white p-5">
+            <Text className="text-base font-semibold text-slate-900 mb-3">
+              Edit task
+            </Text>
+            <Text className="text-[13px] text-slate-700 mb-1">Title</Text>
+            <TextInput
+              className="border border-slate-200 rounded-xl px-3 py-2 text-[14px] text-slate-900 mb-3"
+              value={editTitle}
+              onChangeText={setEditTitle}
+              placeholder="Task title"
+              placeholderTextColor="#9CA3AF"
+            />
+            <Text className="text-[13px] text-slate-700 mb-1">Note / Time</Text>
+            <TextInput
+              className="border border-slate-200 rounded-xl px-3 py-2 text-[14px] text-slate-900 mb-4"
+              value={editNote}
+              onChangeText={setEditNote}
+              placeholder="e.g. 17:00–18:00"
+              placeholderTextColor="#9CA3AF"
+            />
+            <View className="flex-row justify-between">
+              <Pressable
+                onPress={handleDeleteFromModal}
+                className="px-4 py-2 rounded-xl bg-red-500"
+              >
+                <Text className="text-[13px] text-white font-semibold">
+                  Delete
+                </Text>
+              </Pressable>
+              <View className="flex-row">
+                <Pressable
+                  onPress={closeEdit}
+                  className="px-4 py-2 rounded-xl border border-slate-200 mr-2"
+                >
+                  <Text className="text-[13px] text-slate-700">Cancel</Text>
+                </Pressable>
+                <Pressable
+                  onPress={handleSaveEdit}
+                  disabled={!canSaveEdit}
+                  className={`px-4 py-2 rounded-xl ${
+                    canSaveEdit ? 'bg-blue-600' : 'bg-slate-300'
+                  }`}
+                >
+                  <Text className="text-[13px] text-white font-semibold">
+                    Save
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

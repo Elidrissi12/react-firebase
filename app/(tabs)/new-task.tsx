@@ -64,7 +64,7 @@ export default function NewTaskScreen() {
           >
             <View className="w-4 h-[1.5px] bg-white mb-1" />
             <View className="w-4 h-[1.5px] bg-white mb-1" />
-            <View className="w-4 h-[1.5px] bg-white" />
+            <View className="w-4 h-[1.5px] bg-white mb-1" />
           </Pressable>
           <Text className="text-[35px] text-white font-semibold">New Task</Text>
           <Pressable
@@ -149,7 +149,6 @@ export default function NewTaskScreen() {
             }`}
           />
         </View>
-
         <View className="mt-10 items-center">
           <Pressable
             onPress={handleDone}
