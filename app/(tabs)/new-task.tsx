@@ -8,6 +8,10 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import { useTodos } from '../src/store/todosStore';
 
@@ -19,7 +23,8 @@ export default function NewTaskScreen() {
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<string>('Work');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [time, setTime] = useState('');
   const [important, setImportant] = useState(false);
 
@@ -28,13 +33,17 @@ export default function NewTaskScreen() {
   const handleDone = () => {
     if (!canSave) return;
 
-    const todayString = new Date().toISOString().slice(0, 10);
+    const selectedDate = date ?? new Date();
+    const y = selectedDate.getFullYear();
+    const m = `${selectedDate.getMonth() + 1}`.padStart(2, '0');
+    const d = `${selectedDate.getDate()}`.padStart(2, '0');
+    const formatted = `${y}-${m}-${d}`;
 
     addTodo({
       title: title.trim(),
       description: undefined,
       category,
-      date: date || todayString,
+      date: formatted,
       time: time || undefined,
       important,
       done: false,
@@ -44,19 +53,37 @@ export default function NewTaskScreen() {
   };
 
   const handleBack = () => {
-    router.back();
+    router.push('/(tabs)/lists');
   };
 
   const handleOpenMenu = () => {
     router.push('/(tabs)/lists');
   };
 
+  const onChangeDate = (_event: DateTimePickerEvent, selected?: Date) => {
+    if (Platform.OS !== 'ios') {
+      setShowDatePicker(false);
+    }
+    if (selected) {
+      setDate(selected);
+    }
+  };
+
+  const formattedDateLabel = (() => {
+    if (!date) return 'YYYY-MM-DD';
+    const y = date.getFullYear();
+    const m = `${date.getMonth() + 1}`.padStart(2, '0');
+    const d = `${date.getDate()}`.padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  })();
+
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-white"
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View className="bg-blue-600 rounded-b-3xl px-5 pt-5 pb-6">
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View className="bg-blue-600 rounded-b-3xl px-5 pt-5 pb-6">
         <View className="flex-row items-center justify-between mb-3">
           <Pressable
             onPress={handleOpenMenu}
@@ -78,11 +105,11 @@ export default function NewTaskScreen() {
           Add a new task and set its details.
         </Text>
       </View>
-      <ScrollView
-        className="flex-1 px-5 pt-5"
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 32 }}
-      >
+        <ScrollView
+          className="flex-1 px-5 pt-5"
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingBottom: 32 }}
+        >
         <TextInput
           className="text-[14px] text-slate-900 mb-4 pb-2 border-b border-slate-200"
           placeholder="Add a description..."
@@ -93,7 +120,7 @@ export default function NewTaskScreen() {
         <View className="py-3 border-b border-slate-200">
           <View className="flex-row items-center justify-between mb-2">
             <Text className="text-[13px] text-slate-600">Category</Text>
-            <Text className="text-[13px] text-slate-900">{category}</Text>
+            <Text className="text-[13px] text-slate-800">{category}</Text>
           </View>
           <View className="flex-row mt-1">
             {CATEGORIES.map(cat => {
@@ -122,13 +149,14 @@ export default function NewTaskScreen() {
         </View>
         <View className="py-3 border-b border-slate-200">
           <Text className="text-[13px] text-slate-600 mb-1">Date</Text>
-          <TextInput
-            className="text-[14px] text-slate-900"
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor="#9CA3AF"
-            value={date}
-            onChangeText={setDate}
-          />
+          <Pressable
+            onPress={() => setShowDatePicker(true)}
+            className="py-1"
+          >
+            <Text className="text-[14px] text-slate-900">
+              {formattedDateLabel}
+            </Text>
+          </Pressable>
         </View>
         <View className="py-3 border-b border-slate-200">
           <Text className="text-[13px] text-slate-600 mb-1">Time</Text>
@@ -161,7 +189,34 @@ export default function NewTaskScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+
+      {showDatePicker && (
+        <View className="absolute inset-0 bg-black/40 items-center justify-center px-6">
+          <View className="w-full rounded-2xl bg-white p-4">
+            <DateTimePicker
+              value={date ?? new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={onChangeDate}
+              {...(Platform.OS === 'ios'
+                ? { preferredDatePickerStyle: 'wheels' as const, textColor: 'black' }
+                : {})}
+            />
+            <View className="flex-row justify-end mt-3">
+              <Pressable
+                onPress={() => setShowDatePicker(false)}
+                className="px-4 py-2"
+              >
+                <Text className="text-[13px] text-blue-600 font-semibold">
+                  OK
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      )}
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

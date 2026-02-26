@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Alert } from 'react-native';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -51,6 +52,16 @@ export default function TodosScreen() {
       prev.map(todo => (todo.id === id ? { ...todo, done: !todo.done } : todo)),
     );
   };
+  const confirmDelete = (id: string) => {
+  Alert.alert(
+    'Delete task?',
+    'Are you sure you want to delete this task?',
+    [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: () => deleteTodo(id) },
+    ]
+  );
+};
 
   const deleteTodo = (id: string) => {
     setTodos(prev => prev.filter(todo => todo.id !== id));
@@ -109,7 +120,7 @@ export default function TodosScreen() {
         </Pressable>
 
         <Pressable
-          onPress={() => deleteTodo(item.id)}
+          onPress={() => confirmDelete(item.id)}
           className="px-2 py-1 rounded-lg bg-red-500"
         >
           <Text className="text-[12px] text-white font-medium">Delete</Text>

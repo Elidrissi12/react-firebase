@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { FlatList, Modal, Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
+import { Alert, FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTodos, type Todo } from '../src/store/todosStore';
 
@@ -109,8 +110,22 @@ export default function TasksScreen() {
 
   const handleDeleteFromModal = () => {
     if (!editingTodo) return;
-    deleteTodo(editingTodo.id);
-    closeEdit();
+
+    Alert.alert(
+      'Delete task?',
+      'Are you sure you want to delete this task?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            deleteTodo(editingTodo.id);
+            closeEdit();
+          },
+        },
+      ],
+    );
   };
 
   const renderItem = ({ item }: { item: Todo }) => {

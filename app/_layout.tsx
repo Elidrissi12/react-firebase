@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Slot, useRouter } from 'expo-router';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { auth } from './src/services/firebase';
 import '../global.css';
+
 export default function RootLayout() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -18,9 +20,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!ready) return;
-    if (user) router.replace('/');      
-    else router.replace('/login');      
-  }, [ready, user]);
+    if (user) router.replace('/');
+    else router.replace('/login');
+  }, [ready, user, router]);
 
-  return <Slot />;
+  return (
+    <SafeAreaProvider>
+      <Slot />
+    </SafeAreaProvider>
+  );
 }

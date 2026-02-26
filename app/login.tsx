@@ -13,6 +13,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../app/src/services/firebase";
 import { mapFirebaseAuthError } from "../app/src/utils/authErrors";
 
@@ -65,14 +66,15 @@ export default function LoginScreen() {
       resizeMode="cover"
       className="flex-1"
     >
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerClassName="flex-grow px-5 pt-16 pb-8"
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView
+          className="flex-1"
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerClassName="flex-grow px-5 pt-16 pb-8"
+          >
           <View className="flex-row items-center mb-4">
             <Pressable
               className="w-8 h-8 rounded-full items-center justify-center mr-2"
@@ -164,8 +166,9 @@ export default function LoginScreen() {
               <Text className="text-[12px] text-blue-600 font-semibold"> Sign up</Text>
             </Pressable>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </ImageBackground>
   );
 }

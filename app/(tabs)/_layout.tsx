@@ -13,12 +13,13 @@ export default function TabLayout() {
   return (
     <TodosProvider>
       <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-          headerShown: false,
-          tabBarButton: HapticTab,
-        }}
-      >
+  screenOptions={{
+    tabBarActiveTintColor: '#2563EB',   
+    tabBarInactiveTintColor: '#6B7280', 
+    headerShown: false,
+    tabBarButton: HapticTab,
+  }}
+>
         <Tabs.Screen
           name="index"
           options={{

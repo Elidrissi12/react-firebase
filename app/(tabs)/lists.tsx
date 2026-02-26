@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTodos } from '../src/store/todosStore';
 
@@ -87,7 +88,7 @@ export default function ListsScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white pt-12 px-5">
+    <SafeAreaView className="flex-1 bg-white pt-12 px-5">
       <View className="flex-row items-center mb-4">
         <Pressable className="w-8 h-8 rounded-full items-center justify-center mr-3">
           <View className="w-4 h-[1.5px] bg-slate-700 mb-1" />
@@ -120,7 +121,7 @@ export default function ListsScreen() {
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

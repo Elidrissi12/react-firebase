@@ -6,6 +6,7 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
+import { Alert } from 'react-native';
 
 export type Todo = {
   id: string;
@@ -55,6 +56,17 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
       prev.map(t => (t.id === id ? { ...t, done: !t.done } : t)),
     );
   }, []);
+
+  const confirmDelete = (id: string) => {
+  Alert.alert(
+    'Delete task?',
+    'Are you sure you want to delete this task?',
+    [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: () => deleteTodo(id) },
+    ]
+  );
+};
 
   const deleteTodo = useCallback((id: string) => {
     setTodos(prev => prev.filter(t => t.id !== id));
