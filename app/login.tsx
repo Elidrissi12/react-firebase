@@ -14,11 +14,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { auth } from "../app/src/services/firebase";
-import { mapFirebaseAuthError } from "../app/src/utils/authErrors";
+import { auth } from "./src/services/firebase";
+import { mapFirebaseAuthError } from "./src/utils/authErrors";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { theme, themeName } = useTheme();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +68,13 @@ export default function LoginScreen() {
       resizeMode="cover"
       className="flex-1"
     >
+      <View
+        style={{
+          flex: 1,
+          backgroundColor:
+            themeName === "dark" ? "rgba(15,23,42,0.7)" : "transparent",
+        }}
+      >
       <SafeAreaView className="flex-1">
         <KeyboardAvoidingView
           className="flex-1"
@@ -80,30 +89,80 @@ export default function LoginScreen() {
               className="w-8 h-8 rounded-full items-center justify-center mr-2"
               onPress={() => router.replace("/register")}
             >
-              <Text className="text-[28px] text-gray-900">‹</Text>
+              <Text
+                className={`text-[28px] ${
+                  themeName === "light" ? "text-gray-900" : "text-gray-50"
+                }`}
+              >
+                ‹
+              </Text>
             </Pressable>
 
-            <Text className="text-[26px] font-bold text-gray-900">Log in</Text>
+            <Text
+              className={`text-[26px] font-bold ${
+                themeName === "light" ? "text-gray-900" : "text-gray-50"
+              }`}
+            >
+              Log in
+            </Text>
           </View>
 
-          <Text className="text-[13px] text-gray-500 mb-4">
+          <Text
+            className={`text-[13px] mb-4 ${
+              themeName === "light" ? "text-gray-500" : "text-gray-300"
+            }`}
+          >
             Log in with one of the following
           </Text>
 
           <View className="flex-row gap-3 mb-7">
-            <Pressable className="flex-1 flex-row items-center justify-center gap-2 rounded-full border border-gray-200 bg-gray-50 py-5">
+            <Pressable
+              className={`flex-1 flex-row items-center justify-center gap-2 rounded-full border py-5 ${
+                themeName === "light"
+                  ? "border-gray-200 bg-gray-50"
+                  : "border-slate-500 bg-slate-900/60"
+              }`}
+            >
               <AntDesign name="google" size={18} color="#DB4437" />
-              <Text className="text-[13px] font-medium text-gray-900">| With Google</Text>
+              <Text
+                className={`text-[13px] font-medium ${
+                  themeName === "light" ? "text-gray-900" : "text-slate-50"
+                }`}
+              >
+                | With Google
+              </Text>
             </Pressable>
 
-            <Pressable className="flex-1 flex-row items-center justify-center gap-2 rounded-full border border-gray-200 bg-gray-50 py-5">
-              <Ionicons name="logo-apple" size={18} color="#111" />
-              <Text className="text-[13px] font-medium text-gray-900">| With Apple</Text>
+            <Pressable
+              className={`flex-1 flex-row items-center justify-center gap-2 rounded-full border py-5 ${
+                themeName === "light"
+                  ? "border-gray-200 bg-gray-50"
+                  : "border-slate-500 bg-slate-900/60"
+              }`}
+            >
+              <Ionicons
+                name="logo-apple"
+                size={18}
+                color={themeName === "light" ? "#111" : "#F9FAFB"}
+              />
+              <Text
+                className={`text-[13px] font-medium ${
+                  themeName === "light" ? "text-gray-900" : "text-slate-50"
+                }`}
+              >
+                | With Apple
+              </Text>
             </Pressable>
           </View>
 
           <View className="mb-4">
-            <Text className="text-[13px] font-medium text-gray-700 mb-3 mt-2">Email*</Text>
+            <Text
+              className={`text-[13px] font-medium mb-3 mt-2 ${
+                themeName === "light" ? "text-gray-700" : "text-gray-200"
+              }`}
+            >
+              Email*
+            </Text>
             <TextInput
               className="border border-gray-200 rounded-xl px-4 py-3 mb-3 bg-[#F9FAFF]"
               placeholder="zaki@gmail.com"
@@ -113,7 +172,13 @@ export default function LoginScreen() {
               onChangeText={setEmail}
             />
 
-            <Text className="text-[13px] font-medium text-gray-700 mb-3 mt-2">Password*</Text>
+            <Text
+              className={`text-[13px] font-medium mb-3 mt-2 ${
+                themeName === "light" ? "text-gray-700" : "text-gray-200"
+              }`}
+            >
+              Password*
+            </Text>
             <TextInput
               className="border border-gray-200 rounded-xl px-4 py-3 mb-2 bg-[#F9FAFF]"
               placeholder="Password"
@@ -133,16 +198,28 @@ export default function LoginScreen() {
                     rememberMe ? "bg-blue-600 border-blue-600" : "border-gray-400",
                   ].join(" ")}
                 />
-                <Text className="text-[12px] text-gray-700">Remember me</Text>
+                <Text
+                  className={`text-[12px] ${
+                    themeName === "light" ? "text-gray-700" : "text-gray-200"
+                  }`}
+                >
+                  Remember me
+                </Text>
               </Pressable>
 
               <Pressable onPress={onForgotPassword}>
-                <Text className="text-[12px] text-blue-600 font-medium">Forgot Password</Text>
+                <Text className="text-[12px] text-blue-600 font-medium">
+                  Forgot Password
+                </Text>
               </Pressable>
             </View>
 
-            {error && <Text className="text-[12px] text-red-600 mt-2">{error}</Text>}
-            {info && !error && <Text className="text-[12px] text-green-600 mt-2">{info}</Text>}
+            {error && (
+              <Text className="text-[12px] text-red-500 mt-2">{error}</Text>
+            )}
+            {info && !error && (
+              <Text className="text-[12px] text-green-500 mt-2">{info}</Text>
+            )}
           </View>
 
           <Pressable
@@ -161,7 +238,13 @@ export default function LoginScreen() {
           </Pressable>
 
           <View className="mt-5 flex-row justify-center">
-            <Text className="text-[12px] text-gray-500">First time here?</Text>
+            <Text
+              className={`text-[12px] ${
+                themeName === "light" ? "text-gray-500" : "text-gray-300"
+              }`}
+            >
+              First time here?
+            </Text>
             <Pressable onPress={() => router.push("/register")} disabled={loading}>
               <Text className="text-[12px] text-blue-600 font-semibold"> Sign up</Text>
             </Pressable>
@@ -169,6 +252,7 @@ export default function LoginScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
+      </View>
     </ImageBackground>
   );
 }

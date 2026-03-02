@@ -8,18 +8,18 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { TodosProvider } from '../src/store/todosStore';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
 
   return (
     <TodosProvider>
       <Tabs
-  screenOptions={{
-    tabBarActiveTintColor: '#2563EB',   
-    tabBarInactiveTintColor: '#6B7280', 
-    headerShown: false,
-    tabBarButton: HapticTab,
-  }}
->
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme].primary,
+          tabBarInactiveTintColor: Colors[colorScheme].icon,
+          headerShown: false,
+          tabBarButton: HapticTab,
+        }}
+      >
         <Tabs.Screen
           name="index"
           options={{

@@ -16,9 +16,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth } from './src/services/firebase';
 import { mapFirebaseAuthError } from './src/utils/authErrors';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const { themeName } = useTheme();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -51,6 +53,13 @@ export default function RegisterScreen() {
       className="flex-1"
       resizeMode="cover"
     >
+      <View
+        style={{
+          flex: 1,
+          backgroundColor:
+            themeName === 'dark' ? 'rgba(15,23,42,0.7)' : 'transparent',
+        }}
+      >
       <SafeAreaView className="flex-1">
         <KeyboardAvoidingView
           className="flex-1"
@@ -65,29 +74,63 @@ export default function RegisterScreen() {
               className="w-10 h-10 rounded-full items-center justify-center mr-3"
               onPress={() => router.back()}
             >
-              <Text className="text-3xl text-slate-900">{'‹'}</Text>
+              <Text
+                className={`text-3xl ${
+                  themeName === 'light' ? 'text-slate-900' : 'text-slate-50'
+                }`}
+              >
+                {'‹'}
+              </Text>
             </Pressable>
-            <Text className="text-[26px] font-bold text-slate-900">Sign up</Text>
+            <Text
+              className={`text-[26px] font-bold ${
+                themeName === 'light' ? 'text-slate-900' : 'text-slate-50'
+              }`}
+            >
+              Sign up
+            </Text>
           </View>
 
-          <Text className="text-[13px] text-slate-500 mb-4">
+          <Text
+            className={`text-[13px] mb-4 ${
+              themeName === 'light' ? 'text-slate-500' : 'text-slate-300'
+            }`}
+          >
             Sign up with one of the following
           </Text>
 
           <View className="flex-row gap-3 mb-6">
             <Pressable className="flex-1 flex-row items-center justify-center rounded-full border border-slate-200 bg-slate-50 py-5 gap-1.5">
               <AntDesign name="google" size={18} color="#DB4437" />
-              <Text className="text-[13px] font-medium text-slate-900">| With Google</Text>
+              <Text
+                className={`text-[13px] font-medium ${
+                  themeName === 'light' ? 'text-slate-900' : 'text-slate-50'
+                }`}
+              >
+                | With Google
+              </Text>
             </Pressable>
 
             <Pressable className="flex-1 flex-row items-center justify-center rounded-full border border-slate-200 bg-slate-50 py-5 gap-1.5">
               <Ionicons name="logo-apple" size={18} color="#111" />
-              <Text className="text-[13px] font-medium text-slate-900">| With Apple</Text>
+              <Text
+                className={`text-[13px] font-medium ${
+                  themeName === 'light' ? 'text-slate-900' : 'text-slate-50'
+                }`}
+              >
+                | With Apple
+              </Text>
             </Pressable>
           </View>
 
           <View className="mb-4">
-            <Text className="text-[13px] font-medium text-slate-700 mb-3 mt-2">Name*</Text>
+            <Text
+              className={`text-[13px] font-medium mb-3 mt-2 ${
+                themeName === 'light' ? 'text-slate-700' : 'text-slate-200'
+              }`}
+            >
+              Name*
+            </Text>
             <TextInput
               className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
               placeholder="Your name"
@@ -95,7 +138,13 @@ export default function RegisterScreen() {
               onChangeText={setName}
             />
 
-            <Text className="text-[13px] font-medium text-slate-700 mb-3 mt-2">Email*</Text>
+            <Text
+              className={`text-[13px] font-medium mb-3 mt-2 ${
+                themeName === 'light' ? 'text-slate-700' : 'text-slate-200'
+              }`}
+            >
+              Email*
+            </Text>
             <TextInput
               className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
               placeholder="Email"
@@ -105,7 +154,13 @@ export default function RegisterScreen() {
               onChangeText={setEmail}
             />
 
-            <Text className="text-[13px] font-medium text-slate-700 mb-3 mt-2">Password*</Text>
+            <Text
+              className={`text-[13px] font-medium mb-3 mt-2 ${
+                themeName === 'light' ? 'text-slate-700' : 'text-slate-200'
+              }`}
+            >
+              Password*
+            </Text>
             <TextInput
               className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
               placeholder="Password"
@@ -114,7 +169,9 @@ export default function RegisterScreen() {
               onChangeText={setPassword}
             />
 
-            {error && <Text className="text-[12px] text-red-600 mt-2">{error}</Text>}
+            {error && (
+              <Text className="text-[12px] text-red-500 mt-2">{error}</Text>
+            )}
           </View>
 
           <Pressable
@@ -132,7 +189,13 @@ export default function RegisterScreen() {
           </Pressable>
 
           <View className="mt-5 flex-row justify-center">
-            <Text className="text-[12px] text-slate-600">Already have an account?</Text>
+            <Text
+              className={`text-[12px] ${
+                themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
+              }`}
+            >
+              Already have an account?
+            </Text>
             <Pressable onPress={() => router.replace('/login')} disabled={loading}>
               <Text className="text-[12px] text-blue-600 font-semibold"> Log in</Text>
             </Pressable>
@@ -140,6 +203,7 @@ export default function RegisterScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
+      </View>
     </ImageBackground>
   );
 }

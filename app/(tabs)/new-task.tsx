@@ -13,12 +13,15 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
+
+import { useTheme } from '@/context/ThemeContext';
 import { useTodos } from '../src/store/todosStore';
 
 const CATEGORIES = ['Work', 'Home', 'Fun'];
 
 export default function NewTaskScreen() {
   const router = useRouter();
+  const { theme, themeName } = useTheme();
   const { addTodo } = useTodos();
 
   const [title, setTitle] = useState('');
@@ -78,7 +81,10 @@ export default function NewTaskScreen() {
   })();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView
+      className="flex-1"
+      style={{ backgroundColor: theme.background }}
+    >
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -111,16 +117,29 @@ export default function NewTaskScreen() {
           contentContainerStyle={{ paddingBottom: 32 }}
         >
         <TextInput
-          className="text-[14px] text-slate-900 mb-4 pb-2 border-b border-slate-200"
+          className="text-[14px] mb-4 pb-2 border-b border-slate-200"
+          style={{ color: theme.text }}
           placeholder="Add a description..."
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={theme.textSecondary}
           value={title}
           onChangeText={setTitle}
         />
         <View className="py-3 border-b border-slate-200">
           <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-[13px] text-slate-600">Category</Text>
-            <Text className="text-[13px] text-slate-800">{category}</Text>
+            <Text
+              className={`text-[13px] ${
+                themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
+              }`}
+            >
+              Category
+            </Text>
+            <Text
+              className={`text-[13px] ${
+                themeName === 'light' ? 'text-slate-800' : 'text-slate-100'
+              }`}
+            >
+              {category}
+            </Text>
           </View>
           <View className="flex-row mt-1">
             {CATEGORIES.map(cat => {
@@ -148,28 +167,50 @@ export default function NewTaskScreen() {
           </View>
         </View>
         <View className="py-3 border-b border-slate-200">
-          <Text className="text-[13px] text-slate-600 mb-1">Date</Text>
+          <Text
+            className={`text-[13px] mb-1 ${
+              themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
+            }`}
+          >
+            Date
+          </Text>
           <Pressable
             onPress={() => setShowDatePicker(true)}
             className="py-1"
           >
-            <Text className="text-[14px] text-slate-900">
+            <Text
+              className="text-[14px]"
+              style={{ color: theme.text }}
+            >
               {formattedDateLabel}
             </Text>
           </Pressable>
         </View>
         <View className="py-3 border-b border-slate-200">
-          <Text className="text-[13px] text-slate-600 mb-1">Time</Text>
+          <Text
+            className={`text-[13px] mb-1 ${
+              themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
+            }`}
+          >
+            Time
+          </Text>
           <TextInput
-            className="text-[14px] text-slate-900"
+            className="text-[14px]"
+            style={{ color: theme.text }}
             placeholder="HH:MM"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={theme.textSecondary}
             value={time}
             onChangeText={setTime}
           />
         </View>
         <View className="py-3 border-b border-slate-200 flex-row items-center justify-between">
-          <Text className="text-[13px] text-slate-600">Important?</Text>
+          <Text
+            className={`text-[13px] ${
+              themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
+            }`}
+          >
+            Important?
+          </Text>
           <Pressable
             onPress={() => setImportant(v => !v)}
             className={`w-6 h-6 rounded-md border ${

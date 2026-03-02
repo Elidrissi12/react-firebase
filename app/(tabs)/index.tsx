@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+
+import { useTheme } from '@/context/ThemeContext';
 import { useTodos, type Todo } from '../src/store/todosStore';
 
 const formatTodayLabel = () => {
@@ -59,6 +61,7 @@ const checkboxColorForCategory = (category: string) => {
 export default function TasksScreen() {
   const router = useRouter();
   const { category } = useLocalSearchParams<{ category?: string }>();
+  const { theme, themeName } = useTheme();
   const { todos, toggleTodo, updateTodo, deleteTodo } = useTodos();
 
   const filteredTodos = useMemo(
@@ -138,13 +141,21 @@ export default function TasksScreen() {
         >
           <Text
             className={`text-[14px] ${
-              item.done ? 'text-slate-400 line-through' : 'text-slate-900'
+              item.done
+                ? 'text-slate-400 line-through'
+                : themeName === 'light'
+                  ? 'text-slate-900'
+                  : 'text-slate-100'
             }`}
           >
             {item.title}
           </Text>
           {(item.time || item.description) && (
-            <Text className="text-[11px] text-slate-500 mt-0.5">
+            <Text
+              className={`text-[11px] mt-0.5 ${
+                themeName === 'light' ? 'text-slate-500' : 'text-slate-300'
+              }`}
+            >
               {item.time ?? item.description}
             </Text>
           )}
@@ -167,9 +178,12 @@ export default function TasksScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="bg-blue-600 rounded-b-3xl px-5 pt-5 pb-6">
-        <View className="flex-row items-center justify-between mb-3">
+    <SafeAreaView
+      className="flex-1"
+      style={{ backgroundColor: theme.background }}
+    >
+      <View className="bg-blue-600 rounded-b-3xl px-5 pt-5 pb-4">
+        <View className="flex-row items-center justify-between mb-2">
           <Pressable
             onPress={handleOpenLists}
             className="w-9 h-9 rounded-full bg-blue-500/60 items-center justify-center"
@@ -181,18 +195,22 @@ export default function TasksScreen() {
 
           <Pressable
             onPress={handleBack}
-            className="w-9 h-9 rounded-full bg-blue-500/60 items-center justify-center"
+            className="w-9 h-9 rounded-full bg-blue-500/60 items-center justify-center mt-6"
           >
             <Text className="text-2xl text-white">{'‹'}</Text>
           </Pressable>
         </View>
 
-        <Text className="text-xs text-blue-100 mb-1">
-          {formatTodayLabel()}
-        </Text>
-        <Text className="text-[12px] text-blue-100 mb-2">
-          {doneCount} of {total} items
-        </Text>
+        <View className="flex-row items-center justify-between mt-1">
+          <View>
+            <Text className="text-xs text-blue-100 mb-1">
+              {formatTodayLabel()}
+            </Text>
+            <Text className="text-[12px] text-blue-100">
+              {doneCount} of {total} items
+            </Text>
+          </View>
+        </View>
       </View>
 
       <View className="flex-1 px-5 pt-4">
@@ -200,17 +218,31 @@ export default function TasksScreen() {
           onPress={handleNewTask}
           className="flex-row items-center justify-between py-3 border-b border-slate-200 mb-1"
         >
-          <Text className="text-[13px] text-slate-400">
+          <Text
+            className={`text-[13px] ${
+              themeName === 'light' ? 'text-slate-400' : 'text-slate-300'
+            }`}
+          >
             Add a new item...
           </Text>
           <View className="w-5 h-5 rounded border border-slate-400 items-center justify-center">
-            <Text className="text-[14px] text-slate-500">+</Text>
+            <Text
+              className={`text-[14px] ${
+                themeName === 'light' ? 'text-slate-500' : 'text-slate-200'
+              }`}
+            >
+              +
+            </Text>
           </View>
         </Pressable>
 
         {filteredTodos.length === 0 ? (
           <View className="flex-1 items-center justify-center">
-            <Text className="text-[14px] text-slate-400">
+            <Text
+              className={`text-[14px] ${
+                themeName === 'light' ? 'text-slate-400' : 'text-slate-300'
+              }`}
+            >
               No tasks yet. Tap “Add a new item...” to create one.
             </Text>
           </View>

@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Slot, useRouter } from 'expo-router';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { onAuthStateChanged, type User } from 'firebase/auth';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View } from 'react-native';
+
+import { ThemeProvider } from '@/context/ThemeContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { LogoutButton } from '@/components/LogoutButton';
 import { auth } from './src/services/firebase';
 import '../global.css';
 
-export default function RootLayout() {
+function AuthGate() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -25,8 +31,25 @@ export default function RootLayout() {
   }, [ready, user, router]);
 
   return (
-    <SafeAreaProvider>
+    <View className="flex-1">
       <Slot />
-    </SafeAreaProvider>
+      <View
+        className="absolute right-4 flex-row items-center"
+        style={{ top: insets.top + 10 }}
+      >
+        <ThemeToggle />
+        {user && <LogoutButton />}
+      </View>
+    </View>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <SafeAreaProvider>
+        <AuthGate />
+      </SafeAreaProvider>
+    </ThemeProvider>
   );
 }

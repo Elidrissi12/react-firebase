@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+
+import { useTheme } from '@/context/ThemeContext';
 import { useTodos } from '../src/store/todosStore';
 
 type ListItem = {
@@ -22,6 +24,7 @@ const STATIC_LISTS: ListItem[] = [
 
 export default function ListsScreen() {
   const router = useRouter();
+  const { theme, themeName } = useTheme();
   const { todos } = useTodos();
 
   const counts = useMemo(() => {
@@ -72,10 +75,18 @@ export default function ListsScreen() {
         className="flex-row items-center justify-between py-3 border-b border-slate-200"
       >
         <View className="flex-1">
-          <Text className="text-[15px] text-slate-900 font-medium">
+          <Text
+            className={`text-[15px] font-medium ${
+              themeName === 'light' ? 'text-slate-900' : 'text-slate-100'
+            }`}
+          >
             {item.label}
           </Text>
-          <Text className="text-[12px] text-slate-400 mt-0.5">
+          <Text
+            className={`text-[12px] mt-0.5 ${
+              themeName === 'light' ? 'text-slate-400' : 'text-slate-300'
+            }`}
+          >
             {count} items
           </Text>
         </View>
@@ -88,7 +99,10 @@ export default function ListsScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white pt-12 px-5">
+    <SafeAreaView
+      className="flex-1 pt-12 px-5"
+      style={{ backgroundColor: theme.background }}
+    >
       <View className="flex-row items-center mb-4">
         <Pressable className="w-8 h-8 rounded-full items-center justify-center mr-3">
           <View className="w-4 h-[1.5px] bg-slate-700 mb-1" />
@@ -96,10 +110,18 @@ export default function ListsScreen() {
           <View className="w-4 h-[1.5px] bg-slate-700" />
         </Pressable>
         <View className="flex-1">
-          <Text className="text-[20px] font-semibold text-slate-900">
+          <Text
+            className={`text-[20px] font-semibold ${
+              themeName === 'light' ? 'text-slate-900' : 'text-slate-100'
+            }`}
+          >
             All lists
           </Text>
-          <Text className="text-[12px] text-slate-400 mt-0.5">
+          <Text
+            className={`text-[12px] mt-0.5 ${
+              themeName === 'light' ? 'text-slate-400' : 'text-slate-300'
+            }`}
+          >
             7 categories
           </Text>
         </View>
@@ -112,11 +134,21 @@ export default function ListsScreen() {
         contentContainerClassName="pb-4"
         ListFooterComponent={
           <View className="pt-3 border-t border-slate-200 mt-3 flex-row items-center justify-between">
-            <Text className="text-[14px] text-slate-500">
+            <Text
+              className={`text-[14px] ${
+                themeName === 'light' ? 'text-slate-500' : 'text-slate-300'
+              }`}
+            >
               Add a new list...
             </Text>
             <Pressable className="w-7 h-7 rounded-full border border-slate-400 items-center justify-center">
-              <Text className="text-[18px] text-slate-500">+</Text>
+              <Text
+                className={`text-[18px] ${
+                  themeName === 'light' ? 'text-slate-500' : 'text-slate-200'
+                }`}
+              >
+                +
+              </Text>
             </Pressable>
           </View>
         }
