@@ -264,21 +264,23 @@ export default function TasksScreen() {
         onRequestClose={closeEdit}
       >
         <View className="flex-1 bg-black/40 items-center justify-center px-6">
-          <View className="w-full rounded-2xl bg-white p-5">
-            <Text className="text-base font-semibold text-slate-900 mb-3">
+          <View className={`w-full rounded-2xl  ${ themeName === 'light' ? 'bg-white p-5' : 'bg-slate-800 p-5' }`}>
+            <Text className={`text-base font-semibold  ${
+              themeName === 'light' ? 'text-slate-900 mb-3' : 'text-slate-200 mb-3'
+            }`}>
               Edit task
             </Text>
-            <Text className="text-[13px] text-slate-700 mb-1">Title</Text>
+            <Text className={`text-[13px] ${ themeName === 'light' ? 'text-slate-700 mb-1' : 'text-slate-200 mb-1' }`}>Title</Text>
             <TextInput
-              className="border border-slate-200 rounded-xl px-3 py-2 text-[14px] text-slate-900 mb-3"
+              className={`border border-slate-200 rounded-xl px-3 py-2 text-[14px] ${ themeName === 'light' ? 'text-slate-900 mb-3' : 'text-slate-200 mb-3' }`}
               value={editTitle}
               onChangeText={setEditTitle}
               placeholder="Task title"
               placeholderTextColor="#9CA3AF"
             />
-            <Text className="text-[13px] text-slate-700 mb-1">Note / Time</Text>
+            <Text className={`text-[13px] ${ themeName === 'light' ? 'text-slate-700 mb-1' : 'text-slate-200 mb-1' }`}>Note / Time</Text>
             <TextInput
-              className="border border-slate-200 rounded-xl px-3 py-2 text-[14px] text-slate-900 mb-4"
+              className={`border border-slate-200 rounded-xl px-3 py-2 text-[14px] ${ themeName === 'light' ? 'text-slate-900 mb-4' : 'text-slate-200 mb-4' }`}
               value={editNote}
               onChangeText={setEditNote}
               placeholder="e.g. 17:00–18:00"
@@ -298,7 +300,7 @@ export default function TasksScreen() {
                   onPress={closeEdit}
                   className="px-4 py-2 rounded-xl border border-slate-200 mr-2"
                 >
-                  <Text className="text-[13px] text-slate-700">Cancel</Text>
+                  <Text className={`text-[13px]  ${ themeName === 'light' ? 'text-slate-700' : 'text-slate-200' }`}>Cancel</Text>
                 </Pressable>
                 <Pressable
                   onPress={handleSaveEdit}

@@ -32,7 +32,9 @@ export const LogoutButton = () => {
       {loading ? (
         <ActivityIndicator size="small" color="#ffffff" />
       ) : (
-        <Text className="text-xs font-semibold text-white">
+        <Text className={`text-xs font-semibold  ${
+              themeName === 'light' ? 'text-slate-900' : 'text-slate-200'
+            }`} >
           Logout
         </Text>
       )}

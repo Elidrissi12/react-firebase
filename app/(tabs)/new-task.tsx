@@ -56,7 +56,7 @@ export default function NewTaskScreen() {
   };
 
   const handleBack = () => {
-    router.push('/(tabs)/lists');
+    router.push('./lists');
   };
 
   const handleOpenMenu = () => {
@@ -99,7 +99,7 @@ export default function NewTaskScreen() {
             <View className="w-4 h-[1.5px] bg-white mb-1" />
             <View className="w-4 h-[1.5px] bg-white mb-1" />
           </Pressable>
-          <Text className="text-[35px] text-white font-semibold">New Task</Text>
+          <Text className="text-[35px]  py-6 text-white font-semibold">New Task</Text>
           <Pressable
             onPress={handleBack}
             className="w-9 h-9 rounded-full bg-blue-500/60 items-center justify-center"

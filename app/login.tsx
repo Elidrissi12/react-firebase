@@ -208,7 +208,7 @@ export default function LoginScreen() {
               </Pressable>
 
               <Pressable onPress={onForgotPassword}>
-                <Text className="text-[12px] text-blue-600 font-medium">
+                <Text className="text-[12px]  text-blue-600 font-medium">
                   Forgot Password
                 </Text>
               </Pressable>

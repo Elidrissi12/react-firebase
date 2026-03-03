@@ -105,9 +105,15 @@ export default function ListsScreen() {
     >
       <View className="flex-row items-center mb-4">
         <Pressable className="w-8 h-8 rounded-full items-center justify-center mr-3">
-          <View className="w-4 h-[1.5px] bg-slate-700 mb-1" />
-          <View className="w-4 h-[1.5px] bg-slate-700 mb-1" />
-          <View className="w-4 h-[1.5px] bg-slate-700" />
+          <View className={`w-4 h-[1.5px] ${
+              themeName === 'light' ? ' bg-slate-700 mb-1' : ' bg-slate-200 mb-1'
+            }`} />
+          <View className={`w-4 h-[1.5px] ${
+              themeName === 'light' ? ' bg-slate-700 mb-1' : ' bg-slate-200 mb-1'
+            }`}  />
+          <View className={`w-4 h-[1.5px] ${
+              themeName === 'light' ? ' bg-slate-700 mb-1' : ' bg-slate-200 mb-1'
+            }`} />
         </Pressable>
         <View className="flex-1">
           <Text
