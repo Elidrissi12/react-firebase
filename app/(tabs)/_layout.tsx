@@ -45,6 +45,15 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="settings"
+          options={{
+            title: t('tabs.settings'),
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="gearshape" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="new-task"
           options={{
             href: null,
