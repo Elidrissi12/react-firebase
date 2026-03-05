@@ -106,6 +106,11 @@ const fr = {
     section: {
       appearance: 'Apparence',
       language: 'Langue',
+      notifications: 'Notifications',
+    },
+    notifications: {
+      push: 'Notifications push',
+      description: 'Rappelle-moi les tâches à venir.',
     },
   },
   theme: {
@@ -146,6 +151,7 @@ const fr = {
       english: 'EN',
       french: 'FR',
     },
+    languageLabel: 'Langue',
   },
 };
 

@@ -107,6 +107,11 @@ const en = {
     section: {
       appearance: 'Appearance',
       language: 'Language',
+      notifications: 'Notifications',
+    },
+    notifications: {
+      push: 'Push notifications',
+      description: 'Remind me about upcoming tasks.',
     },
   },
   theme: {
@@ -147,6 +152,7 @@ const en = {
       english: 'EN',
       french: 'FR',
     },
+    languageLabel: 'Language',
   },
 };
 
