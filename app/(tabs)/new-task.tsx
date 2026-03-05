@@ -13,16 +13,22 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
+import { useLanguage } from '@/context/LanguageContext';
 
 import { useTheme } from '@/context/ThemeContext';
 import { useTodos } from '../src/store/todosStore';
 
-const CATEGORIES = ['Work', 'Home', 'Fun'];
+const CATEGORIES = [
+  { key: 'Work', labelKey: 'todos.lists.work' },
+  { key: 'Home', labelKey: 'todos.lists.home' },
+  { key: 'Fun', labelKey: 'todos.lists.fun' },
+] as const;
 
 export default function NewTaskScreen() {
   const router = useRouter();
   const { theme, themeName } = useTheme();
   const { addTodo } = useTodos();
+  const { t } = useLanguage();
 
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<string>('Work');
@@ -99,7 +105,9 @@ export default function NewTaskScreen() {
             <View className="w-4 h-[1.5px] bg-white mb-1" />
             <View className="w-4 h-[1.5px] bg-white mb-1" />
           </Pressable>
-          <Text className="text-[35px]  py-6 text-white font-semibold">New Task</Text>
+          <Text className="text-[35px]  py-6 text-white font-semibold">
+            {t('todos.form.newTaskTitle')}
+          </Text>
           <Pressable
             onPress={handleBack}
             className="w-9 h-9 rounded-full bg-blue-500/60 items-center justify-center"
@@ -108,7 +116,7 @@ export default function NewTaskScreen() {
           </Pressable>
         </View>
         <Text className="text-[12px] text-blue-100">
-          Add a new task and set its details.
+          {t('todos.form.newTaskSubtitle')}
         </Text>
       </View>
         <ScrollView
@@ -119,7 +127,7 @@ export default function NewTaskScreen() {
         <TextInput
           className="text-[14px] mb-4 pb-2 border-b border-slate-200"
           style={{ color: theme.text }}
-          placeholder="Add a description..."
+          placeholder={t('todos.form.titlePlaceholder')}
           placeholderTextColor={theme.textSecondary}
           value={title}
           onChangeText={setTitle}
@@ -131,23 +139,26 @@ export default function NewTaskScreen() {
                 themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
               }`}
             >
-              Category
+              {t('todos.form.categoryLabel')}
             </Text>
             <Text
               className={`text-[13px] ${
                 themeName === 'light' ? 'text-slate-800' : 'text-slate-100'
               }`}
             >
-              {category}
+              {t(
+                CATEGORIES.find(cat => cat.key === category)?.labelKey ??
+                  'todos.lists.work',
+              )}
             </Text>
           </View>
           <View className="flex-row mt-1">
             {CATEGORIES.map(cat => {
-              const selected = cat === category;
+              const selected = cat.key === category;
               return (
                 <Pressable
-                  key={cat}
-                  onPress={() => setCategory(cat)}
+                  key={cat.key}
+                  onPress={() => setCategory(cat.key)}
                   className={`px-6 py-1.5 mr-2 rounded-full border ${
                     selected
                       ? 'bg-blue-600 border-blue-600'
@@ -159,7 +170,7 @@ export default function NewTaskScreen() {
                       selected ? 'text-white' : 'text-slate-700'
                     }`}
                   >
-                    {cat}
+                    {t(cat.labelKey)}
                   </Text>
                 </Pressable>
               );
@@ -172,7 +183,7 @@ export default function NewTaskScreen() {
               themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
             }`}
           >
-            Date
+            {t('todos.form.dueDateLabel')}
           </Text>
           <Pressable
             onPress={() => setShowDatePicker(true)}
@@ -192,7 +203,7 @@ export default function NewTaskScreen() {
               themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
             }`}
           >
-            Time
+            {t('todos.form.timeLabel')}
           </Text>
           <TextInput
             className="text-[14px]"
@@ -209,7 +220,7 @@ export default function NewTaskScreen() {
               themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
             }`}
           >
-            Important?
+            {t('todos.form.importantLabel')}
           </Text>
           <Pressable
             onPress={() => setImportant(v => !v)}
@@ -226,7 +237,9 @@ export default function NewTaskScreen() {
               canSave ? 'bg-blue-600' : 'bg-slate-300'
             }`}
           >
-            <Text className="text-[15px] text-white font-semibold">Done</Text>
+            <Text className="text-[15px] text-white font-semibold">
+              {t('todos.form.submitCreate')}
+            </Text>
           </Pressable>
         </View>
       </ScrollView>

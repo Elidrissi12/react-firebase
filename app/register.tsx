@@ -17,10 +17,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth } from './src/services/firebase';
 import { mapFirebaseAuthError } from './src/utils/authErrors';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function RegisterScreen() {
   const router = useRouter();
   const { themeName } = useTheme();
+  const { t } = useLanguage();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -87,7 +89,7 @@ export default function RegisterScreen() {
                 themeName === 'light' ? 'text-slate-900' : 'text-slate-50'
               }`}
             >
-              Sign up
+              {t('auth.register.title')}
             </Text>
           </View>
 
@@ -96,7 +98,7 @@ export default function RegisterScreen() {
               themeName === 'light' ? 'text-slate-500' : 'text-slate-300'
             }`}
           >
-            Sign up with one of the following
+            {t('auth.register.subtitle')}
           </Text>
 
           <View className="flex-row gap-3 mb-6">
@@ -107,7 +109,7 @@ export default function RegisterScreen() {
                   themeName === 'light' ? 'text-slate-900' : 'text-slate-50'
                 }`}
               >
-                | With Google
+                {t('auth.register.withGoogle')}
               </Text>
             </Pressable>
 
@@ -118,7 +120,7 @@ export default function RegisterScreen() {
                   themeName === 'light' ? 'text-slate-900' : 'text-slate-50'
                 }`}
               >
-                | With Apple
+                {t('auth.register.withApple')}
               </Text>
             </Pressable>
           </View>
@@ -129,11 +131,11 @@ export default function RegisterScreen() {
                 themeName === 'light' ? 'text-slate-700' : 'text-slate-200'
               }`}
             >
-              Name*
+              {t('auth.register.nameLabel')}
             </Text>
             <TextInput
               className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
-              placeholder="Your name"
+              placeholder={t('auth.register.namePlaceholder')}
               value={name}
               onChangeText={setName}
             />
@@ -143,11 +145,11 @@ export default function RegisterScreen() {
                 themeName === 'light' ? 'text-slate-700' : 'text-slate-200'
               }`}
             >
-              Email*
+              {t('auth.register.emailLabel')}
             </Text>
             <TextInput
               className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
-              placeholder="Email"
+              placeholder={t('auth.register.emailPlaceholder')}
               autoCapitalize="none"
               keyboardType="email-address"
               value={email}
@@ -159,11 +161,11 @@ export default function RegisterScreen() {
                 themeName === 'light' ? 'text-slate-700' : 'text-slate-200'
               }`}
             >
-              Password*
+              {t('auth.register.passwordLabel')}
             </Text>
             <TextInput
               className="border border-slate-200 rounded-xl px-3.5 py-2.5 mb-2 bg-slate-50"
-              placeholder="Password"
+              placeholder={t('auth.register.passwordPlaceholder')}
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -184,7 +186,9 @@ export default function RegisterScreen() {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text className="text-white font-semibold text-[15px]">Sign up</Text>
+              <Text className="text-white font-semibold text-[15px]">
+                {t('auth.register.submit')}
+              </Text>
             )}
           </Pressable>
 
@@ -194,10 +198,13 @@ export default function RegisterScreen() {
                 themeName === 'light' ? 'text-slate-600' : 'text-slate-300'
               }`}
             >
-              Already have an account?
+              {t('auth.register.alreadyHaveAccount')}
             </Text>
             <Pressable onPress={() => router.replace('/login')} disabled={loading}>
-              <Text className="text-[12px] text-blue-600 font-semibold"> Log in</Text>
+              <Text className="text-[12px] text-blue-600 font-semibold">
+                {' '}
+                {t('auth.register.login')}
+              </Text>
             </Pressable>
           </View>
           </ScrollView>

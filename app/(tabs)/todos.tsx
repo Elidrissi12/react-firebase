@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Alert } from 'react-native';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -71,6 +72,7 @@ export default function TodosScreen() {
     setEditingTodo(todo);
     setEditText(todo.text);
   };
+  const { t } = useLanguage();
 
   const saveEdit = () => {
     if (!editingTodo || !canSaveEdit) return;

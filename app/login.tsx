@@ -17,10 +17,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "./src/services/firebase";
 import { mapFirebaseAuthError } from "./src/utils/authErrors";
 import { useTheme } from "@/context/ThemeContext";
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function LoginScreen() {
   const router = useRouter();
   const { theme, themeName } = useTheme();
+  const {  t } = useLanguage();  
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +50,7 @@ export default function LoginScreen() {
   const onForgotPassword = async () => {
     const trimmed = email.trim();
     if (!trimmed) {
-      setError("Entre ton email pour réinitialiser le mot de passe.");
+      setError(t('errors.required'));
       return;
     }
 
@@ -56,7 +58,7 @@ export default function LoginScreen() {
     setInfo(null);
     try {
       await sendPasswordResetEmail(auth, trimmed);
-      setInfo("Un email de réinitialisation a été envoyé.");
+      setInfo(t('auth.login.resetEmailSent'));
     } catch (e: any) {
       setError(mapFirebaseAuthError(e?.code));
     }
@@ -84,35 +86,26 @@ export default function LoginScreen() {
             keyboardShouldPersistTaps="handled"
             contentContainerClassName="flex-grow px-5 pt-16 pb-8"
           >
-          <View className="flex-row items-center mb-4">
-            <Pressable
-              className="w-8 h-8 rounded-full items-center justify-center mr-2"
-              onPress={() => router.replace("/register")}
-            >
-              <Text
-                className={`text-[28px] ${
-                  themeName === "light" ? "text-gray-900" : "text-gray-50"
-                }`}
-              >
-                ‹
-              </Text>
-            </Pressable>
-
-            <Text
-              className={`text-[26px] font-bold ${
-                themeName === "light" ? "text-gray-900" : "text-gray-50"
-              }`}
-            >
-              Log in
-            </Text>
-          </View>
+          <View className="flex-row items-center mb-4 min-h-[40px] justify-between">
+                      <View className="flex-row items-center">
+                        
+                        <Text
+                          className={`text-[26px] font-bold ${
+                            themeName === 'light' ? 'text-slate-900' : 'text-slate-50'
+                          }`}
+                        >
+                          {t('auth.login.title')}
+                        </Text>
+                      </View>
+   
+                    </View>
 
           <Text
             className={`text-[13px] mb-4 ${
               themeName === "light" ? "text-gray-500" : "text-gray-300"
             }`}
           >
-            Log in with one of the following
+            {t('auth.login.subtitle')}
           </Text>
 
           <View className="flex-row gap-3 mb-7">
@@ -129,7 +122,7 @@ export default function LoginScreen() {
                   themeName === "light" ? "text-gray-900" : "text-slate-50"
                 }`}
               >
-                | With Google
+                {t('auth.login.withGoogle')}
               </Text>
             </Pressable>
 
@@ -150,7 +143,7 @@ export default function LoginScreen() {
                   themeName === "light" ? "text-gray-900" : "text-slate-50"
                 }`}
               >
-                | With Apple
+                {t('auth.login.withApple')}
               </Text>
             </Pressable>
           </View>
@@ -161,11 +154,11 @@ export default function LoginScreen() {
                 themeName === "light" ? "text-gray-700" : "text-gray-200"
               }`}
             >
-              Email*
+              {t('auth.login.emailLabel')}
             </Text>
             <TextInput
               className="border border-gray-200 rounded-xl px-4 py-3 mb-3 bg-[#F9FAFF]"
-              placeholder="zaki@gmail.com"
+              placeholder={t('auth.login.emailPlaceholder')}
               autoCapitalize="none"
               keyboardType="email-address"
               value={email}
@@ -177,11 +170,11 @@ export default function LoginScreen() {
                 themeName === "light" ? "text-gray-700" : "text-gray-200"
               }`}
             >
-              Password*
+              {t('auth.login.passwordLabel')}
             </Text>
             <TextInput
               className="border border-gray-200 rounded-xl px-4 py-3 mb-2 bg-[#F9FAFF]"
-              placeholder="Password"
+              placeholder={t('auth.login.passwordPlaceholder')}
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -203,13 +196,13 @@ export default function LoginScreen() {
                     themeName === "light" ? "text-gray-700" : "text-gray-200"
                   }`}
                 >
-                  Remember me
+                  {t('auth.login.rememberMe')}
                 </Text>
               </Pressable>
 
               <Pressable onPress={onForgotPassword}>
                 <Text className="text-[12px]  text-blue-600 font-medium">
-                  Forgot Password
+                  {t('auth.login.forgotPassword')}
                 </Text>
               </Pressable>
             </View>
@@ -233,7 +226,7 @@ export default function LoginScreen() {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text className="text-white font-semibold text-[15px]">Log in</Text>
+              <Text className="text-white font-semibold text-[15px]">{t('auth.login.submit')}</Text>
             )}
           </Pressable>
 
@@ -246,7 +239,7 @@ export default function LoginScreen() {
               First time here?
             </Text>
             <Pressable onPress={() => router.push("/register")} disabled={loading}>
-              <Text className="text-[12px] text-blue-600 font-semibold"> Sign up</Text>
+              <Text className="text-[12px] text-blue-600 font-semibold"> {t('auth.login.signUp')}</Text>
             </Pressable>
           </View>
           </ScrollView>

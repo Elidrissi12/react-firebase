@@ -4,18 +4,24 @@ import React from 'react';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { TodosProvider } from '../src/store/todosStore';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme() ?? 'light';
+  const { themeName } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <TodosProvider>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme].primary,
-          tabBarInactiveTintColor: Colors[colorScheme].icon,
+          tabBarActiveTintColor: Colors[themeName].tabIconSelected,
+          tabBarInactiveTintColor: Colors[themeName].tabIconDefault,
+          tabBarStyle: {
+            backgroundColor: Colors[themeName].surface,
+            borderTopColor: Colors[themeName].border,
+          },
           headerShown: false,
           tabBarButton: HapticTab,
         }}
@@ -23,7 +29,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Tasks',
+            title: t('tabs.todos'),
             tabBarIcon: ({ color }) => (
               <IconSymbol size={28} name="checklist" color={color} />
             ),
@@ -32,7 +38,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="lists"
           options={{
-            title: 'Lists',
+            title: t('tabs.lists'),
             tabBarIcon: ({ color }) => (
               <IconSymbol size={28} name="list.bullet" color={color} />
             ),
@@ -47,7 +53,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="explore"
           options={{
-            title: 'Explore',
+            title: t('tabs.explore'),
             tabBarIcon: ({ color }) => (
               <IconSymbol size={28} name="paperplane.fill" color={color} />
             ),

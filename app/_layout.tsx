@@ -3,8 +3,9 @@ import { Slot, useRouter } from 'expo-router';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View } from 'react-native';
-
 import { ThemeProvider } from '@/context/ThemeContext';
+import { LanguageProvider } from '@/context/LanguageContext';
+import { LanguageToggle } from '@/components/LanguageToggle';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LogoutButton } from '@/components/LogoutButton';
 import { auth } from './src/services/firebase';
@@ -38,6 +39,7 @@ function AuthGate() {
         style={{ top: insets.top + 10 }}
       >
         <ThemeToggle />
+        <LanguageToggle />
         {user && <LogoutButton />}
       </View>
     </View>
@@ -46,10 +48,12 @@ function AuthGate() {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <SafeAreaProvider>
-        <AuthGate />
-      </SafeAreaProvider>
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <SafeAreaProvider>
+          <AuthGate />
+        </SafeAreaProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }

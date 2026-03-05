@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useLanguage } from '@/context/LanguageContext';
 
 import { useTheme } from '@/context/ThemeContext';
 import { useTodos } from '../src/store/todosStore';
@@ -13,20 +14,20 @@ type ListItem = {
 };
 
 const STATIC_LISTS: ListItem[] = [
-  { key: 'today', label: 'Today', color: '#2563EB' }, 
-  { key: 'this-week', label: 'This week', color: '#F97316' }, 
-  { key: 'this-month', label: 'This month', color: '#EC4899' }, 
-  { key: 'all', label: 'All tasks', color: '#7C2D12' }, 
-  { key: 'Work', label: 'Work', color: '#06B6D4' }, 
-  { key: 'Home', label: 'Home', color: '#8B5CF6' }, 
-  { key: 'Fun', label: 'Fun', color: '#EF4444' }, 
+  { key: 'today', label: 'todos.lists.today', color: '#2563EB' },
+  { key: 'this-week', label: 'todos.lists.thisWeek', color: '#F97316' },
+  { key: 'this-month', label: 'todos.lists.thisMonth', color: '#EC4899' },
+  { key: 'all', label: 'todos.lists.all', color: '#7C2D12' },
+  { key: 'Work', label: 'todos.lists.work', color: '#06B6D4' },
+  { key: 'Home', label: 'todos.lists.home', color: '#8B5CF6' },
+  { key: 'Fun', label: 'todos.lists.fun', color: '#EF4444' },
 ];
 
 export default function ListsScreen() {
   const router = useRouter();
   const { theme, themeName } = useTheme();
   const { todos } = useTodos();
-
+  const { t } = useLanguage();
   const counts = useMemo(() => {
     const now = new Date();
     const todayKey = now.toISOString().slice(0, 10);
@@ -80,14 +81,14 @@ export default function ListsScreen() {
               themeName === 'light' ? 'text-slate-900' : 'text-slate-100'
             }`}
           >
-            {item.label}
+            {t(item.label)}
           </Text>
           <Text
             className={`text-[12px] mt-0.5 ${
               themeName === 'light' ? 'text-slate-400' : 'text-slate-300'
             }`}
           >
-            {count} items
+            {count} {t('todos.items')}
           </Text>
         </View>
         <View
@@ -121,14 +122,14 @@ export default function ListsScreen() {
               themeName === 'light' ? 'text-slate-900' : 'text-slate-100'
             }`}
           >
-            All lists
+            {t('todos.allLists')}
           </Text>
           <Text
             className={`text-[12px] mt-0.5 ${
               themeName === 'light' ? 'text-slate-400' : 'text-slate-300'
             }`}
           >
-            7 categories
+            {t('todos.categoriesCount')}
           </Text>
         </View>
       </View>
@@ -145,7 +146,7 @@ export default function ListsScreen() {
                 themeName === 'light' ? 'text-slate-500' : 'text-slate-300'
               }`}
             >
-              Add a new list...
+              {t('todos.addNewList')}
             </Text>
             <Pressable className="w-7 h-7 rounded-full border border-slate-400 items-center justify-center">
               <Text
