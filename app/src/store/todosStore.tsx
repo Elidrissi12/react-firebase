@@ -2,11 +2,21 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react';
-import { Alert } from 'react-native';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from 'firebase/firestore';
+
+import { auth, db } from '../services/firebase';
 
 export type Todo = {
   id: string;
@@ -22,15 +32,15 @@ export type Todo = {
 
 type TodosContextValue = {
   todos: Todo[];
-  addTodo: (input: Omit<Todo, 'id' | 'createdAt'>) => void;
-  toggleTodo: (id: string) => void;
-  deleteTodo: (id: string) => void;
+  addTodo: (input: Omit<Todo, 'id' | 'createdAt'>) => Promise<void>;
+  toggleTodo: (id: string) => Promise<void>;
+  deleteTodo: (id: string) => Promise<void>;
   updateTodo: (
     id: string,
     changes: Partial<
       Pick<Todo, 'title' | 'description' | 'category' | 'date' | 'time' | 'important'>
     >,
-  ) => void;
+  ) => Promise<void>;
 };
 
 const TodosContext = createContext<TodosContextValue | undefined>(undefined);
@@ -38,50 +48,78 @@ const TodosContext = createContext<TodosContextValue | undefined>(undefined);
 export const TodosProvider = ({ children }: { children: ReactNode }) => {
   const [todos, setTodos] = useState<Todo[]>([]);
 
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const ref = collection(db, 'users', user.uid, 'todos');
+    const unsub = onSnapshot(ref, snap => {
+      const items: Todo[] = snap.docs.map(d => ({
+        id: d.id,
+        ...(d.data() as Omit<Todo, 'id'>),
+      }));
+      setTodos(items);
+    });
+
+    return unsub;
+  }, []);
+
   const addTodo = useCallback(
-    (input: Omit<Todo, 'id' | 'createdAt'>) => {
-      const now = Date.now();
-      const todo: Todo = {
-        id: now.toString(),
-        createdAt: now,
-        ...input,
+    async (input: Omit<Todo, 'id' | 'createdAt'>) => {
+      const user = auth.currentUser;
+      if (!user) return;
+      const ref = collection(db, 'users', user.uid, 'todos');
+      const { title, category, important, done, description, date, time } =
+        input;
+      const payload: any = {
+        title,
+        category,
+        important,
+        done,
+        createdAt: Date.now(),
       };
-      setTodos(prev => [todo, ...prev]);
+      if (description !== undefined) payload.description = description;
+      if (date !== undefined) payload.date = date;
+      if (time !== undefined) payload.time = time;
+      await addDoc(ref, payload);
     },
     [],
   );
 
-  const toggleTodo = useCallback((id: string) => {
-    setTodos(prev =>
-      prev.map(t => (t.id === id ? { ...t, done: !t.done } : t)),
-    );
-  }, []);
-
-  const confirmDelete = (id: string) => {
-  Alert.alert(
-    'Delete task?',
-    'Are you sure you want to delete this task?',
-    [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteTodo(id) },
-    ]
+  const toggleTodo = useCallback(
+    async (id: string) => {
+      const user = auth.currentUser;
+      if (!user) return;
+      const current = todos.find(t => t.id === id);
+      if (!current) return;
+      const ref = doc(db, 'users', user.uid, 'todos', id);
+      await updateDoc(ref, { done: !current.done });
+    },
+    [todos],
   );
-};
 
-  const deleteTodo = useCallback((id: string) => {
-    setTodos(prev => prev.filter(t => t.id !== id));
+  const deleteTodo = useCallback(async (id: string) => {
+    const user = auth.currentUser;
+    if (!user) return;
+    const ref = doc(db, 'users', user.uid, 'todos', id);
+    await deleteDoc(ref);
   }, []);
 
   const updateTodo = useCallback(
-    (
+    async (
       id: string,
       changes: Partial<
         Pick<Todo, 'title' | 'description' | 'category' | 'date' | 'time' | 'important'>
       >,
     ) => {
-      setTodos(prev =>
-        prev.map(t => (t.id === id ? { ...t, ...changes } : t)),
+      const user = auth.currentUser;
+      if (!user) return;
+      const ref = doc(db, 'users', user.uid, 'todos', id);
+      const cleanChanges = Object.fromEntries(
+        Object.entries(changes).filter(([, value]) => value !== undefined),
       );
+      if (Object.keys(cleanChanges).length === 0) return;
+      await updateDoc(ref, cleanChanges);
     },
     [],
   );
