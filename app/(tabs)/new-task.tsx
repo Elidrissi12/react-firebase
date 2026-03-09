@@ -14,6 +14,7 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import { useLanguage } from '@/context/LanguageContext';
+import * as Notifications from 'expo-notifications';
 
 import { useTheme } from '@/context/ThemeContext';
 import { useTodos } from '../src/store/todosStore';
@@ -23,6 +24,33 @@ const CATEGORIES = [
   { key: 'Home', labelKey: 'todos.lists.home' },
   { key: 'Fun', labelKey: 'todos.lists.fun' },
 ] as const;
+
+function buildTriggerFromDateTime(date: Date | null, time: string | undefined) {
+  if (!date) return undefined;
+
+  let hours = 9;
+  let minutes = 0;
+
+  if (time && /^\d{2}:\d{2}$/.test(time)) {
+    const [h, m] = time.split(':').map(Number);
+    hours = h;
+    minutes = m;
+  }
+
+  const triggerDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    hours,
+    minutes,
+  );
+
+  if (triggerDate.getTime() <= Date.now()) {
+    return undefined;
+  }
+
+  return triggerDate;
+}
 
 export default function NewTaskScreen() {
   const router = useRouter();
@@ -39,7 +67,7 @@ export default function NewTaskScreen() {
 
   const canSave = title.trim().length > 0;
 
-  const handleDone = () => {
+  const handleDone = async () => {
     if (!canSave) return;
 
     const selectedDate = date ?? new Date();
@@ -48,7 +76,18 @@ export default function NewTaskScreen() {
     const d = `${selectedDate.getDate()}`.padStart(2, '0');
     const formatted = `${y}-${m}-${d}`;
 
-    addTodo({
+    const trigger = buildTriggerFromDateTime(date, time);
+    if (trigger) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: title.trim() || 'Task reminder',
+          body: time || 'Task is due',
+        },
+        trigger,
+      });
+    }
+
+    await addTodo({
       title: title.trim(),
       description: undefined,
       category,

@@ -9,6 +9,7 @@ import { LanguageToggle } from '@/components/LanguageToggle';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LogoutButton } from '@/components/LogoutButton';
 import { auth } from './src/services/firebase';
+import { registerForPushNotificationsAsync } from './notificationsConfig';
 import '../global.css';
 
 function AuthGate() {
@@ -16,6 +17,10 @@ function AuthGate() {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+  }, []);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
